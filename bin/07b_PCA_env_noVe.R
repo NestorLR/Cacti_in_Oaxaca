@@ -5,88 +5,87 @@ library(vegan)
 library(pairwiseAdonis)
 library(ggrepel)
 
-setwd("/media/delil/ADATA_Nestor_Blue/Nestor_phD/Spatial_Analysis/Oax_Cactaceae/bin")
-
-
 ################################################################################
-##### Variables VIF<10
-
+##### PCA sin veracruz
 pca_data <- read.csv("../data/env_data/from_database-04-10-26/EnvDataset_VIF10.csv")
 str(pca_data)
+names(pca_data)
 
-pca_data$bio_14 <- as.numeric(pca_data$bio_14)
-pca_data$bio_18 <- as.numeric(pca_data$bio_18)
-pca_data$bio_19 <- as.numeric(pca_data$bio_19)
+pca_data_noVe <- pca_data %>%
+  filter(
+    Province != "Veracruzan province"
+  )
+
 
 #scale
-env_scaled <- pca_data %>%
-  select(-c(Species, lon, lat, Province, Genus, Endemismo))
+env_scaled_noVe <- pca_data_noVe %>%
+  select(c(bio_07, bio_11, bio_14, bio_15, bio_18, bio_19, slope, tpi))
 
-pca <- prcomp(
-  env_scaled,
+pca_noVe <- prcomp(
+  env_scaled_noVe,
   center = TRUE,
   scale. = TRUE
 )
 
-summary(pca)
-scores <- as.data.frame(pca$x)
+summary(pca_noVe)
+scores <- as.data.frame(pca_noVe$x)
 
-pca_results <- bind_cols(
-  pca_data,
+pca_results_noVe <- bind_cols(
+  pca_data_noVe,
   scores
 )
 
+
 ### loadings de las variables
 round(
-  pca$rotation,
+  pca_noVe$rotation,
   2
 )
 
-loadings <- as.data.frame(pca$rotation)
+loadings_noVe <- as.data.frame(pca_noVe$rotation)
 
-loadings$Variable <- rownames(loadings)
+loadings_noVe$Variable <- rownames(loadings_noVe)
 arrow_scale <- 10
-loadings <- loadings %>%
+loadings_noVe <- loadings_noVe %>%
   mutate(
     PC1_arrow = PC1 * arrow_scale,
     PC2_arrow = PC2 * arrow_scale
   )
 
-loadings$Variable_label <- gsub(
+loadings_noVe$Variable_label <- gsub(
   "bio_",
   "BIO",
-  loadings$Variable
+  loadings_noVe$Variable
 )
 
 
 
-contrib_pct <- sweep(
-  pca$rotation^2,
+contrib_pct_noVe <- sweep(
+  pca_noVe$rotation^2,
   2,
-  colSums(pca$rotation^2),
+  colSums(pca_noVe$rotation^2),
   "/"
 ) * 100
 
-write.csv(contrib_pct, "../results/Tables/From_Database_04-10-26/Loadings_PCA.csv")
+write.csv(contrib_pct_noVe, "../results/Tables/From_Database_04-10-26/Loadings_PCA_noVe.csv")
 
 
 
 # Porcentaje de varianza explicada
-var_exp <- (pca$sdev^2 / sum(pca$sdev^2)) * 100
-var_exp
-pc1_label <- paste0("PC1 (", round(var_exp[1], 2), "%)")
-pc2_label <- paste0("PC2 (", round(var_exp[2], 2), "%)")
+var_exp_noVe <- (pca_noVe$sdev^2 / sum(pca_noVe$sdev^2)) * 100
+var_exp_noVe
+pc1_label_noVe <- paste0("PC1 (", round(var_exp_noVe[1], 2), "%)")
+pc2_label_noVe <- paste0("PC2 (", round(var_exp_noVe[2], 2), "%)")
 
 # Tabla egigenvalue + variance
-pca_variance <- data.frame(
-  PC = paste0("PC", seq_along(var_exp)),
-  Eigenvalue = pca$sdev^2,
-  Variance = var_exp,
-  Cumulative = cumsum(var_exp)
+pca_variance_noVe <- data.frame(
+  PC = paste0("PC", seq_along(var_exp_noVe)),
+  Eigenvalue = pca_noVe$sdev^2,
+  Variance = var_exp_noVe,
+  Cumulative = cumsum(var_exp_noVe)
 )
 
-# Tabla para destacar los registros de Chiapas
-small_province <- pca_results %>%
+small_province <- pca_results_noVe %>%
   filter(
     Province ==
       "Chiapas Highlands province"
@@ -95,12 +94,12 @@ small_province <- pca_results %>%
 ### PCA por provincia con los loadigs
 
 ggplot(
-  pca_results,
+  pca_results_noVe,
   aes(PC1, PC2, color = Province)
 ) +
   # Vectores de los loadings
   geom_segment(
-    data = loadings,
+    data = loadings_noVe,
     aes(
       x = 0,
       y = 0,
@@ -125,7 +124,7 @@ ggplot(
     size = 0.8
   ) +
   geom_text_repel(
-    data = loadings,
+    data = loadings_noVe,
     aes(
       x = PC1_arrow,
       y = PC2_arrow,
@@ -142,14 +141,12 @@ ggplot(
       "Sierra Madre del Sur province" = "#6f9e43",
       "Balsas Basin province" = "#FFA500",
       "Pacific Lowlands province" = "#5fafc0",
-      "Veracruzan province" = "#483D8B",
       "Chiapas Highlands province" = "#FF4500"
     ),
     labels = c(
       "Sierra Madre del Sur province" = "Sierra Madre del Sur",
       "Balsas Basin province" = "Depresión del Balsas",
       "Pacific Lowlands province" = "Tierras Bajas del Pacífico",
-      "Veracruzan province" = "Provincia Veracruzana",
       "Chiapas Highlands province" = "Altos de Chiapas"
     )
   ) +
@@ -164,8 +161,8 @@ ggplot(
   ) +
   theme_bw() +
   labs(
-    x = pc1_label,
-    y = pc2_label,
+    x = pc1_label_noVe,
+    y = pc2_label_noVe,
     color = "Provincias"
   ) +
   theme(
@@ -179,7 +176,7 @@ ggplot(
   )
 
 ggsave(
-  "../results/figures/from_database-04-10-26/PCA_provincias_complete.png",
+  "../results/figures/from_database-04-10-26/PCA_provincias_noVe.png",
   plot = last_plot(),
   width = 8,
   height = 6,
@@ -190,22 +187,13 @@ ggsave(
 
 #### Prueva estadística: PERMANOVA
 
-env_test <- pca_results %>%
-  select(
-    bio_07,
-    bio_11,
-    bio_14,
-    bio_15,
-    bio_18,
-    bio_19,
-    tpi,
-    slope
-  )
+env_test_noVe <- pca_env_noVera %>%
+  select(c(bio_01, bio_04, bio_12, bio_17, bio_06, elev, tri))
 
-province <- pca_results$Province
+province_noVe <- pca_env_noVera$Province
 
 permanova <- adonis2(
-  env_test ~ province,
+  env_test_noVe ~ province_noVe,
   method = "euclidean",
   permutations = 999
 )
@@ -229,6 +217,7 @@ anova(disp)
 permutest(disp)
 
 #### Comparación por pares
+install.packages("pairwiseAdonis")
 pairwise.adonis2(
   env_test,
   factors = province,

@@ -1,0 +1,31 @@
+"Province","Variable","n","Q1","Mediana","Q3","IQR","Min","Max"
+"Balsas Basin province","BIO07 — Intervalo anual de temperatura",1067,21.8499994277954,23.2000007629395,24,2.1500005722046,16.5,26.6000003814697
+"Balsas Basin province","BIO11 — Temperatura media del trimestre más frío",1067,18.7083330154419,20.2000007629395,21.8833332061768,3.1750001907349,13.25,22.7333335876465
+"Balsas Basin province","BIO14 — Precipitación del mes más seco",1067,3.5,5,9,5.5,1,25
+"Balsas Basin province","BIO15 — Estacionalidad de la precipitación",1067,91.4413528442383,93.6790618896484,96.5708618164062,5.1295089721679,80.5281982421875,103.852203369141
+"Balsas Basin province","BIO18 — Precipitación del trimestre más cálido",1067,194,233,260,66,107,393
+"Balsas Basin province","BIO19 — Precipitación del trimestre más frío",1067,18,22,33,15,5,145
+"Chiapas Highlands province","BIO07 — Intervalo anual de temperatura",3,14.8500008583069,15.0000009536743,15.6500000953674,0.799999237060501,14.7000007629395,16.2999992370605
+"Chiapas Highlands province","BIO11 — Temperatura media del trimestre más frío",3,18,19,19.4666671752929,1.46666717529295,17,19.9333343505859
+"Chiapas Highlands province","BIO14 — Precipitación del mes más seco",3,13,18,19,6,8,20
+"Chiapas Highlands province","BIO15 — Estacionalidad de la precipitación",3,71.6428661346436,79.6247634887695,85.3796081542968,13.7367420196533,63.6609687805176,91.1344528198242
+"Chiapas Highlands province","BIO18 — Precipitación del trimestre más cálido",3,297.5,380,405,107.5,215,430
+"Chiapas Highlands province","BIO19 — Precipitación del trimestre más frío",3,57,78,100,43,36,122
+"Pacific Lowlands province","BIO07 — Intervalo anual de temperatura",1113,13.5999984741211,14.2999992370605,16,2.4000015258789,12.5,22
+"Pacific Lowlands province","BIO11 — Temperatura media del trimestre más frío",1113,24.6833343505859,25.6666660308838,25.8166675567627,1.1333332061768,17.5499992370605,27.0499992370605
+"Pacific Lowlands province","BIO14 — Precipitación del mes más seco",1113,2,4,5,3,0,21
+"Pacific Lowlands province","BIO15 — Estacionalidad de la precipitación",1113,105.19181060791,106.796241760254,110.26114654541,5.0693359375,77.7410354614258,120.798072814941
+"Pacific Lowlands province","BIO18 — Precipitación del trimestre más cálido",1113,276,358,378,102,111,482
+"Pacific Lowlands province","BIO19 — Precipitación del trimestre más frío",1113,11,15,17,6,1,152
+"Sierra Madre del Sur province","BIO07 — Intervalo anual de temperatura",1296,18.5,20.4000005722046,22.1999988555908,3.6999988555908,12,25
+"Sierra Madre del Sur province","BIO11 — Temperatura media del trimestre más frío",1296,13.8333337306976,15.3999996185303,17.8333339691162,4.00000023841857,8.56666660308838,23.2999992370605
+"Sierra Madre del Sur province","BIO14 — Precipitación del mes más seco",1296,4,5,7,3,0,89
+"Sierra Madre del Sur province","BIO15 — Estacionalidad de la precipitación",1296,89.4738578796387,92.2798843383789,94.3859806060791,4.91212272644047,73.1082992553711,108.825157165527
+"Sierra Madre del Sur province","BIO18 — Precipitación del trimestre más cálido",1296,218,245,276,58,91,812
+"Sierra Madre del Sur province","BIO19 — Precipitación del trimestre más frío",1296,19,26,41,22,6,384
+"Veracruzan province","BIO07 — Intervalo anual de temperatura",32,16.1000013351441,17.6999998092651,18.5250000953674,2.42499876022335,15.0999994277954,20.3000011444092
+"Veracruzan province","BIO11 — Temperatura media del trimestre más frío",32,20.1416659355164,21.7250003814697,22.1083340644836,1.96666812896727,17.6333332061768,22.5
+"Veracruzan province","BIO14 — Precipitación del mes más seco",32,32.75,46,59,26.25,20,109
+"Veracruzan province","BIO15 — Estacionalidad de la precipitación",32,72.5472450256348,78.1486206054688,85.1038322448731,12.5565872192383,54.9846229553223,104.353507995605
+"Veracruzan province","BIO18 — Precipitación del trimestre más cálido",32,514,616.5,679.5,165.5,247,928
+"Veracruzan province","BIO19 — Precipitación del trimestre más frío",32,163.5,230,301,137.5,91,473
