@@ -1,0 +1,12 @@
+> permanova
+Permutation test for adonis under reduced model
+Permutation: free
+Number of permutations: 999
+
+adonis2(formula = env_test ~ province, permutations = 999, method = "euclidean")
+           Df SumOfSqs      R2      F Pr(>F)    
+Model       4 10676050 0.34573 463.16  0.001 ***
+Residual 3506 20203903 0.65427                  
+Total    3510 30879953 1.00000                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

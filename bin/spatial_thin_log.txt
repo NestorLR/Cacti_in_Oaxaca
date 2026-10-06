@@ -1,0 +1,41 @@
+********************************************** 
+ Beginning Spatial Thinning.
+ Script Started at: Thu Jun 11 17:51:44 2026
+There appear to be more than one species name in this *.csv file.
+Only using species name: Acanthocereus tetragonus
+
+Thinning Parameter Used (in km): 5
+Number of replicates of thinning script: 1
+
+Elapsed time for thinning completion
+5.71 1.04 6.78 NA NA
+
+Number of data.frames per locations retained
+loc.cnt df.freq
+682
+1
+Maximum number of records after thinning: 682
+Number of data.frames with max records: 1
+No files written for this run.
+********************************************** 
+ Beginning Spatial Thinning.
+ Script Started at: Thu Jun 11 17:52:53 2026
+********************************************** 
+ Beginning Spatial Thinning.
+ Script Started at: Thu Jun 11 17:53:17 2026
+There appear to be more than one species name in this *.csv file.
+Only using species name: Acanthocereus tetragonus
+
+Thinning Parameter Used (in km): 5
+Number of replicates of thinning script: 1
+
+Elapsed time for thinning completion
+4.83 0.8 5.64 NA NA
+
+Number of data.frames per locations retained
+loc.cnt df.freq
+679
+1
+Maximum number of records after thinning: 679
+Number of data.frames with max records: 1
+No files written for this run.
