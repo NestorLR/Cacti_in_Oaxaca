@@ -35,7 +35,7 @@ pca_results <- bind_cols(
   pca_data,
   scores
 )
-
+write.csv(pca_results, "../results/Tables/From_Database_04-10-26/PCA_results_all.csv")
 ### loadings de las variables
 round(
   pca$rotation,
@@ -186,7 +186,13 @@ ggsave(
   dpi = 600
 )
 
-
+ggsave(
+  "../results/figures/from_database-04-10-26/PCA_provincias_complete.pdf",
+  plot = last_plot(),
+  width = 8,
+  height = 6,
+  dpi = 600
+)
 
 #### Prueva estadística: PERMANOVA
 
