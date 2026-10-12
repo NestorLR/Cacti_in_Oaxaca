@@ -1,0 +1,11 @@
+"Provincia 1","Provincia 2","Especies compartidas","Jaccard"
+"Sierra Madre del Sur province","Balsas Basin province",69,0.67
+"Pacific Lowlands province","Sierra Madre del Sur province",50,0.463
+"Pacific Lowlands province","Balsas Basin province",43,0.434
+"Pacific Lowlands province","Veracruzan province",13,0.194
+"Sierra Madre del Sur province","Veracruzan province",13,0.134
+"Veracruzan province","Balsas Basin province",8,0.093
+"Veracruzan province","Chiapas Highlands province",1,0.062
+"Sierra Madre del Sur province","Chiapas Highlands province",1,0.011
+"Pacific Lowlands province","Chiapas Highlands province",0,0
+"Balsas Basin province","Chiapas Highlands province",0,0

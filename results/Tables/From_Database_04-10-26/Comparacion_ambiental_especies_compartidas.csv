@@ -1,0 +1,33 @@
+Provincia,Variable,Especies_compartidas,N_Pacifico,N_otra_provincia,Diferencia,IC95_inferior,IC95_superior,p,p_ajustado,Estado
+Balsas Basin province,bio_07,39,562,611,5.983,5.677,6.289,1.909999999999999e-198,2.299999999999999e-197,OK
+Chiapas Highlands province,bio_07,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,bio_07,48,871,695,2.797,2.495,3.098,3.82e-67,1.1399999999999998e-66,OK
+Veracruzan province,bio_07,11,358,22,2.054,1.164,2.943,7.98e-6,1.06e-5,OK
+Balsas Basin province,bio_11,39,562,611,-3.861,-4.135,-3.586,3.409999999999999e-128,1.6399999999999996e-127,OK
+Chiapas Highlands province,bio_11,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,bio_11,48,871,695,-5.437,-5.741,-5.133,1.4799999999999993e-199,3.559999999999998e-198,OK
+Veracruzan province,bio_11,11,358,22,-2.676,-3.258,-2.094,9.16e-18,1.37e-17,OK
+Balsas Basin province,bio_14,39,562,611,2.79,2.221,3.36,5.4e-21,8.650000000000001e-21,OK
+Chiapas Highlands province,bio_14,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,bio_14,48,871,695,3.541,2.683,4.4,1.2e-15,1.69e-15,OK
+Veracruzan province,bio_14,11,358,22,40.889,38.843,42.935,7.06e-122,2.829999999999999e-121,OK
+Balsas Basin province,bio_15,39,562,611,-12.158,-12.936,-11.38,2.2999999999999993e-130,1.3799999999999996e-129,OK
+Chiapas Highlands province,bio_15,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,bio_15,48,871,695,-11.47,-12.289,-10.65,6.609999999999998e-135,5.2899999999999985e-134,OK
+Veracruzan province,bio_15,11,358,22,-21.869,-25.246,-18.492,6.049999999999999e-31,1.32e-30,OK
+Balsas Basin province,bio_18,39,562,611,-58.781,-67.401,-50.161,3.4099999999999996e-37,9.1e-37,OK
+Chiapas Highlands province,bio_18,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,bio_18,48,871,695,-8.852,-18.853,1.15,0.0828,0.0946,OK
+Veracruzan province,bio_18,11,358,22,250.643,216.516,284.771,3.94e-36,9.46e-36,OK
+Balsas Basin province,bio_19,39,562,611,14.627,11.832,17.422,1.3299999999999998e-23,2.4599999999999996e-23,OK
+Chiapas Highlands province,bio_19,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,bio_19,48,871,695,21.852,17.523,26.182,1.87e-22,3.21e-22,OK
+Veracruzan province,bio_19,11,358,22,201.773,189.474,214.071,9.509999999999997e-95,3.2599999999999994e-94,OK
+Balsas Basin province,slope,39,562,611,2.727,1.363,4.091,9.75e-5,1.23e-4,OK
+Chiapas Highlands province,slope,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,slope,48,871,695,7.135,5.846,8.424,7.37e-25,1.4699999999999999e-24,OK
+Veracruzan province,slope,11,358,22,4.646,0.014,9.277,0.0493,0.0592,OK
+Balsas Basin province,tpi,39,562,611,0.114,-0.175,0.404,0.432,0.451,OK
+Chiapas Highlands province,tpi,0,0,0,NA,NA,NA,NA,NA,Datos insuficientes
+Sierra Madre del Sur province,tpi,48,871,695,0.237,-0.078,0.551,0.14,0.152,OK
+Veracruzan province,tpi,11,358,22,0.207,-0.679,1.093,0.646,0.646,OK

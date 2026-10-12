@@ -1,0 +1,416 @@
+# ============================================================
+# 0. PAQUETES
+# ============================================================
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(lme4)
+library(lmerTest)
+library(emmeans)
+library(purrr)
+library(readr)
+
+# ============================================================
+# 1. CONFIGURACIÓN
+# ============================================================
+
+# Base de datos con registros de presencia y variables ambientales
+# Se asume que cactus_df ya está cargado en R.
+
+setwd("/home/unam/Escritorio/cacti_in_Oaxaca/bin/")
+## Cargar matriz 
+cactus_df <- read.csv("../data/env_data/from_database-04-10-26/database_04-10-26_env_3511.csv")
+
+# Revisar los nombres disponibles
+names(cactus_df)
+unique(cactus_df$Province)
+
+# Nombre exacto de las Tierras Bajas del Pacífico
+pacific <- "Pacific Lowlands province"
+
+# Variables ambientales que se compararán
+env_vars <- c("bio_07", "bio_11", "bio_14", "bio_15", "bio_18",
+              "bio_19", "slope", "tpi")
+
+# ============================================================
+# 2. LIMPIAR Y PREPARAR LOS DATOS
+# ============================================================
+
+env_data <- cactus_df %>%
+  select(all_of(required_cols)) %>%
+  mutate(
+    Species = as.character(Species),
+    Province = as.character(Province)
+  ) %>%
+  filter(
+    !is.na(Species),
+    !is.na(Province)
+  ) %>%
+  distinct()
+
+# Revisar cuántos registros hay por provincia
+env_data %>%
+  count(Province, name = "Registros") %>%
+  print()
+
+# Revisar cuántas especies hay por provincia
+env_data %>%
+  distinct(Species, Province) %>%
+  count(Province, name = "Especies") %>%
+  print()
+
+# ============================================================
+# 3. IDENTIFICAR ESPECIES COMPARTIDAS
+# ============================================================
+
+# Especies registradas en las Tierras Bajas del Pacífico
+pacific_species <- env_data %>%
+  filter(Province == pacific) %>%
+  distinct(Species) %>%
+  pull(Species)
+
+# Especies que también están presentes en cada otra provincia
+species_by_province <- env_data %>%
+  distinct(Species, Province)
+
+shared_by_province <- setdiff(
+  unique(env_data$Province),
+  pacific
+) %>%
+  set_names() %>%
+  map(function(prov) {
+    
+    other_species <- species_by_province %>%
+      filter(Province == prov) %>%
+      pull(Species)
+    
+    intersect(pacific_species, other_species)
+  })
+
+# Resumen del número de especies compartidas con cada provincia
+shared_summary <- tibble(
+  Provincia = names(shared_by_province),
+  Especies_compartidas = map_int(
+    shared_by_province, length
+  )
+)
+
+print(shared_summary)
+
+# ============================================================
+# 4. CREAR LA BASE DE DATOS PARA LOS MODELOS
+# ============================================================
+
+# Conservamos solo especies presentes en las Tierras Bajas
+# del Pacífico y al menos otra provincia.
+shared_all <- unique(unlist(shared_by_province))
+
+shared_data <- env_data %>%
+  filter(Species %in% shared_all) %>%
+  mutate(
+    Province = factor(Province),
+    Species = factor(Species)
+  )
+
+# Revisar los tamaños de muestra
+shared_data %>%
+  group_by(Province) %>%
+  summarise(
+    Registros = n(),
+    Especies = n_distinct(Species),
+    .groups = "drop"
+  ) %>%
+  print()
+
+# ============================================================
+# 5. PREPARAR DATOS EN FORMATO LARGO
+# ============================================================
+
+env_long <- shared_data %>%
+  pivot_longer(
+    cols = all_of(env_vars),
+    names_to = "Variable",
+    values_to = "Valor"
+  ) %>%
+  filter(is.finite(Valor))
+
+# ============================================================
+# 6. GRÁFICOS DE DISTRIBUCIÓN AMBIENTAL
+# ============================================================
+
+p_env <- ggplot(
+  env_long,
+  aes(x = Province, y = Valor)
+) +
+  geom_boxplot(
+    aes(fill = Province),
+    outlier.shape = NA,
+    alpha = 0.65
+  ) +
+  geom_jitter(
+    width = 0.15,
+    alpha = 0.20,
+    size = 0.8
+  ) +
+  facet_wrap(
+    ~ Variable,
+    scales = "free_y"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(
+      angle = 45,
+      hjust = 1
+    ),
+    strip.text = element_text(face = "bold")
+  ) +
+  labs(
+    title = "Ambiente de las especies compartidas",
+    subtitle = "Registros de especies presentes en las Tierras Bajas del Pacífico y otras provincias",
+    x = "Provincia biogeográfica",
+    y = "Valor de la variable ambiental"
+  )
+
+print(p_env)
+
+ggsave(
+  "Ambiente_especies_compartidas.png",
+  plot = p_env,
+  width = 12,
+  height = 8,
+  dpi = 300
+)
+
+
+
+# ============================================================
+# 7. FUNCIÓN PARA COMPARAR DOS PROVINCIAS
+# ============================================================
+
+compare_pair <- function(province_other, variable) {
+  
+  # Especies compartidas específicamente por esta pareja
+  pair_species <- shared_by_province[[province_other]]
+  
+  # Datos limitados a las dos provincias y a esas especies
+  dat <- env_data %>%
+    filter(
+      Province %in% c(pacific, province_other),
+      Species %in% pair_species
+    ) %>%
+    select(Species, Province, all_of(variable)) %>%
+    filter(is.finite(.data[[variable]])) %>%
+    mutate(
+      Province = factor(
+        Province,
+        levels = c(pacific, province_other)
+      ),
+      Species = factor(Species)
+    )
+  
+  # Verificar que haya datos en ambas provincias
+  if (n_distinct(dat$Province) < 2 ||
+      n_distinct(dat$Species) < 2) {
+    return(tibble(
+      Provincia_comparada = province_other,
+      Variable = variable,
+      Especies_compartidas = n_distinct(dat$Species),
+      N_Pacifico = sum(dat$Province == pacific),
+      N_otra_provincia = sum(dat$Province == province_other),
+      Diferencia = NA_real_,
+      IC95_inferior = NA_real_,
+      IC95_superior = NA_real_,
+      p = NA_real_,
+      Estado = "Datos insuficientes"
+    ))
+  }
+  
+  # Asegurar que las especies tienen registros en ambas provincias
+  species_both <- dat %>%
+    distinct(Species, Province) %>%
+    count(Species, name = "n_provincias") %>%
+    filter(n_provincias == 2) %>%
+    pull(Species)
+  
+  dat <- dat %>%
+    filter(Species %in% species_both) %>%
+    droplevels()
+  
+  # El modelo requiere replicación dentro de las especies
+  if (n_distinct(dat$Species) < 2 ||
+      n_distinct(dat$Province) < 2) {
+    return(tibble(
+      Provincia_comparada = province_other,
+      Variable = variable,
+      Especies_compartidas = n_distinct(dat$Species),
+      N_Pacifico = sum(dat$Province == pacific),
+      N_otra_provincia = sum(dat$Province == province_other),
+      Diferencia = NA_real_,
+      IC95_inferior = NA_real_,
+      IC95_superior = NA_real_,
+      p = NA_real_,
+      Estado = "Datos insuficientes"
+    ))
+  }
+  
+  # Ajustar modelo mixto
+  form <- as.formula(
+    paste0("`", variable, "` ~ Province + (1 | Species)")
+  )
+  
+  fit <- tryCatch(
+    lmer(
+      form,
+      data = dat,
+      REML = TRUE
+    ),
+    error = function(e) NULL
+  )
+  
+  if (is.null(fit)) {
+    return(tibble(
+      Provincia_comparada = province_other,
+      Variable = variable,
+      Especies_compartidas = n_distinct(dat$Species),
+      N_Pacifico = sum(dat$Province == pacific),
+      N_otra_provincia = sum(dat$Province == province_other),
+      Diferencia = NA_real_,
+      IC95_inferior = NA_real_,
+      IC95_superior = NA_real_,
+      p = NA_real_,
+      Estado = "El modelo no convergió"
+    ))
+  }
+  
+  # Diferencia ajustada: otra provincia menos Pacífico
+  emm <- emmeans(fit, ~ Province)
+  
+  contrast_result <- contrast(
+    emm,
+    method = list(
+      "Otra provincia - Pacifico" = c(-1, 1)
+    )
+  )
+  
+  out <- as.data.frame(
+    summary(
+      contrast_result,
+      infer = c(TRUE, TRUE),
+      level = 0.95
+    )
+  )
+  
+  tibble(
+    Provincia_comparada = province_other,
+    Variable = variable,
+    Especies_compartidas = n_distinct(dat$Species),
+    N_Pacifico = sum(dat$Province == pacific),
+    N_otra_provincia = sum(dat$Province == province_other),
+    Diferencia = out$estimate[1],
+    IC95_inferior = out$lower.CL[1],
+    IC95_superior = out$upper.CL[1],
+    p = out$p.value[1],
+    Estado = "OK"
+  )
+}
+
+# ============================================================
+# 8. EJECUTAR TODAS LAS COMPARACIONES
+# ============================================================
+
+other_provinces <- names(shared_by_province)
+
+model_results <- expand_grid(
+  Provincia = other_provinces,
+  Variable = env_vars
+) %>%
+  pmap_dfr(
+    function(Provincia, Variable) {
+      compare_pair(Provincia, Variable)
+    }
+  )
+
+print(model_results, n = Inf)
+
+
+# ============================================================
+# 9. CORRECCIÓN POR PRUEBAS MÚLTIPLES
+# ============================================================
+
+model_results <- model_results %>%
+  mutate(
+    p_ajustado = p.adjust(p, method = "BH"),
+    Diferencia = round(Diferencia, 3),
+    IC95_inferior = round(IC95_inferior, 3),
+    IC95_superior = round(IC95_superior, 3),
+    p = signif(p, 3),
+    p_ajustado = signif(p_ajustado, 3)
+  )
+
+# Tabla final para revisar e interpretar
+tabla_ambiental <- model_results %>%
+  select(
+    Provincia = Provincia_comparada,
+    Variable,
+    Especies_compartidas,
+    N_Pacifico,
+    N_otra_provincia,
+    Diferencia,
+    IC95_inferior,
+    IC95_superior,
+    p,
+    p_ajustado,
+    Estado
+  ) %>%
+  arrange(Variable, Provincia)
+
+print(tabla_ambiental, n = Inf)
+
+# Exportar a CSV
+write_csv(
+  tabla_ambiental,
+  "../results/Tables/From_Database_04-10-26/Comparacion_ambiental_especies_compartidas.csv"
+)
+
+library(dplyr)
+library(tidyr)
+library(readr)
+
+tabla_resumen <- model_results %>%
+  mutate(
+    Diferencia_significancia = if_else(
+      p_ajustado < 0.05,
+      "*",
+      ""
+    ),
+    Diferencia_etiqueta = paste0(
+      if_else(Diferencia > 0, "+", ""),
+      sprintf("%.2f", Diferencia),
+      Diferencia_significancia
+    )
+  ) %>%
+  select(
+    Variable,
+    Provincia = Provincia_comparada,
+    Diferencia_etiqueta
+  ) %>%
+  pivot_wider(
+    names_from = Provincia,
+    values_from = Diferencia_etiqueta
+  ) %>%
+  select(
+    Variable,
+    "Balsas Basin province",
+    "Sierra Madre del Sur province",
+    "Veracruzan province",
+  ) %>%
+  arrange(Variable)
+
+print(tabla_resumen, n = Inf)
+
+write_csv(
+  tabla_resumen,
+  "../results/Tables/From_Database_04-10-26/Tabla_resumen_diferencias_ambientalesTierrasBajas.csv"
+)

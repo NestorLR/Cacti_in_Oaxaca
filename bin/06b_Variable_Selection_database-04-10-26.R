@@ -109,6 +109,10 @@ names(env_data)
 env_complete <- env_data %>%
   tidyr::drop_na(,15:31)
 
+
+write.csv(env_complete,"../data/env_data/from_database-04-10-26/database_04-10-26_env_3511.csv")
+
+
 ############################################################
 # 9. Correlation matrix
 ############################################################
